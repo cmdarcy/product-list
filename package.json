@@ -1,0 +1,18 @@
+{
+  "name": "product-list",
+  "version": "1.0.0",
+  "description": "This project has been created by a student at Parsity, an online software engineering course. The work in this repository is wholly of the student based on a sample starter project that can be accessed by looking at the repository that this project forks.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Chris d'Arcy",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "faker": "^5.5.3",
+    "mongoose": "^8.13.2"
+  }
+}
