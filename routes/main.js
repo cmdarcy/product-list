@@ -23,6 +23,7 @@ router.get("/generate-fake-data", (req, res, next) => {
 });
 
 router.get("/products", (req, res, next) => {
+    //TODO check if page query is greater than number of pages needed for products, if so show last page
     const perPage = 9
     let {page} = req.query 
     if (!page) {
@@ -30,7 +31,44 @@ router.get("/products", (req, res, next) => {
     }
     const skipNum = (page - 1) * perPage
     Product.find().skip(skipNum).limit(perPage).exec().then((products) => {
-      res.send(products)
+        res.send(products)
+    });
+});
+
+router.get("/products/:product", (req, res, next) => {
+    //TODO send status codes with responses
+    const {product} = req.params
+    Product.findById(product).exec().then((product) => {
+        res.send(product)
+        res.end()
+    }).catch(err => {
+        console.log(err)
+        res.end()
+    });
+});
+
+router.get("/products/:product/reviews", (req, res, next) => {
+    //TODO send status codes with responses
+    const perPage = 4
+    let {page} = req.query 
+    if (!page) {
+        page = 1
+    }
+    let skipNum
+    
+    const {product} = req.params
+    Product.findById(product, 'reviews').exec().then((product) => {
+        const maxPage = Math.ceil(product.reviews.length / perPage)
+        if (maxPage < page) {
+            skipNum = (maxPage - 1) * perPage
+        } else {
+            skipNum = (page - 1) * perPage
+      }
+      res.send(product.reviews.slice(skipNum, skipNum + perPage))
+      res.end()
+    }).catch(err => {
+        console.log(err)
+        res.end()
     });
   });
 
