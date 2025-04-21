@@ -5,11 +5,13 @@ const Product = require("../models/product");
 router.get("/generate-fake-data", (req, res, next) => {
   for (let i = 0; i < 90; i++) {
     let product = new Product();
+    let fakeStarterReview = {userName: faker.internet.userName(), text: 'Fake review text'}
 
     product.category = faker.commerce.department();
     product.name = faker.commerce.productName();
     product.price = faker.commerce.price();
     product.image = "https://via.placeholder.com/250?text=Product+Image";
+    product.reviews = [fakeStarterReview]
 
     product.save().then((__, err) => {
         if (err) {
