@@ -117,4 +117,39 @@ router.post('/products', (req, res, next) => {
     });
 });
 
+router.post('/products/:product/reviews', (req, res, next) => {
+  // ? Validate if review already exists in db
+  if (!req.body) {
+    res
+      .status(400)
+      .send({ error: 'Failed to supply review in body of request' });
+    return res.end();
+  }
+  const review = req.body;
+  const { product } = req.params;
+
+  Product.findById(product)
+    .exec()
+    .then((dbProduct) => {
+      dbProduct.reviews.push(review);
+      dbProduct
+        .save()
+        .then((doc) => {
+          res.status(201).send(doc);
+          console.log('Review saved successfully');
+          return res.end();
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send({ error: 'Failed to save review to database' });
+          return res.end();
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(404).send({ error: 'Failed to find product in database' });
+      return res.end();
+    });
+});
+
 module.exports = router;

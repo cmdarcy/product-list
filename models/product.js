@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const ReviewSchema = new Schema({
-  userName: String,
-  text: String,
+  userName: { type: String, required: true },
+  text: { type: String, required: true },
 });
 
 const ProductSchema = new Schema({
