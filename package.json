@@ -7,10 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "eslintConfig": {
+  "extends": ["wesbos"]
+},
   "author": "Chris d'Arcy",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "eslint-config-wesbos": "^4.3.2",
     "express": "^5.1.0",
     "faker": "^5.5.3",
     "mongoose": "^8.13.2"
