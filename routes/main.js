@@ -26,39 +26,45 @@ router.get('/generate-fake-data', (req, res, next) => {
 });
 
 router.get('/products', (req, res, next) => {
-  // TODO check if page query is greater than number of pages needed for products, if so show last page
+  // ? paginate based on mongoose chain operators or promise result logic???
   const perPage = 9;
   let { page } = req.query;
   if (!page) {
     page = 1;
   }
-  const skipNum = (page - 1) * perPage;
+  let skipNum;
   Product.find()
-    .skip(skipNum)
-    .limit(perPage)
+    // .skip(skipNum)
+    // .limit(perPage)
     .exec()
-    .then((products) => {
-      res.send(products);
+    .then((dbProducts) => {
+      const maxPage = Math.ceil(dbProducts.length / perPage);
+      if (maxPage < page) {
+        skipNum = (maxPage - 1) * perPage;
+      } else {
+        skipNum = (page - 1) * perPage;
+      }
+      res.status(200).send(dbProducts.slice(skipNum, skipNum + perPage));
+      return res.end();
     });
 });
 
 router.get('/products/:product', (req, res, next) => {
-  // TODO send status codes with responses
   const { product } = req.params;
   Product.findById(product)
     .exec()
     .then((dbProduct) => {
-      res.send(dbProduct);
-      res.end();
+      res.status(200).send(dbProduct);
+      return res.end();
     })
     .catch((err) => {
       console.log(err);
-      res.end();
+      res.status(404).send({ error: 'Failed to find product in database' });
+      return res.end();
     });
 });
 
 router.get('/products/:product/reviews', (req, res, next) => {
-  // TODO send status codes with responses
   const perPage = 4;
   let { page } = req.query;
   if (!page) {
@@ -76,17 +82,17 @@ router.get('/products/:product/reviews', (req, res, next) => {
       } else {
         skipNum = (page - 1) * perPage;
       }
-      res.send(dbProduct.reviews.slice(skipNum, skipNum + perPage));
-      res.end();
+      res.status(200).send(dbProduct.reviews.slice(skipNum, skipNum + perPage));
+      return res.end();
     })
     .catch((err) => {
       console.log(err);
-      res.end();
+      res.status(404).send({ error: 'Failed to find product in database' });
+      return res.end();
     });
 });
 
 router.post('/products', (req, res, next) => {
-  // TODO add status codes
   // ? Validate with schema or using zod
   // ? Validate if product already exists in db
   if (!req.body) {
