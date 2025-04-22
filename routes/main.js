@@ -72,4 +72,26 @@ router.get("/products/:product/reviews", (req, res, next) => {
     });
   });
 
+router.post('/products', (req, res, next) => {
+    //TODO add status codes
+    //? Validate with schema or using zod
+    //? Validate if product already exists in db
+    if (!req.body) {
+        res.status(400).send({error: 'Failed to supply product in body of request'})
+        return res.end()
+    }
+    const product = req.body
+    const newProduct = new Product(product)
+    newProduct.save().then(doc => {
+        res.status(201).send(doc)
+        console.log('Product saved successfully')
+        return res.end()
+    })
+    .catch(err => {
+        console.error(err)
+        res.status(500).send({error: 'Failed to save product to database'})
+        return res.end()
+    })
+})
+
 module.exports = router;
