@@ -45,7 +45,6 @@ router.get('/products', (req, res, next) => {
         skipNum = (page - 1) * perPage;
       }
       res.status(200).send(dbProducts.slice(skipNum, skipNum + perPage));
-      return res.end();
     });
 });
 
@@ -54,13 +53,14 @@ router.get('/products/:product', (req, res, next) => {
   Product.findById(product)
     .exec()
     .then((dbProduct) => {
+      if (!dbProduct) {
+        throw new Error('Product not found');
+      }
       res.status(200).send(dbProduct);
-      return res.end();
     })
     .catch((err) => {
-      console.log(err);
-      res.status(404).send({ error: 'Failed to find product in database' });
-      return res.end();
+      console.error(err);
+      res.status(404).send({ error: `Failed to get product: ${err.message}` });
     });
 });
 
@@ -76,6 +76,9 @@ router.get('/products/:product/reviews', (req, res, next) => {
   Product.findById(product, 'reviews')
     .exec()
     .then((dbProduct) => {
+      if (!dbProduct) {
+        throw new Error('Product not found');
+      }
       const maxPage = Math.ceil(dbProduct.reviews.length / perPage);
       if (maxPage < page) {
         skipNum = (maxPage - 1) * perPage;
@@ -83,47 +86,41 @@ router.get('/products/:product/reviews', (req, res, next) => {
         skipNum = (page - 1) * perPage;
       }
       res.status(200).send(dbProduct.reviews.slice(skipNum, skipNum + perPage));
-      return res.end();
     })
     .catch((err) => {
-      console.log(err);
-      res.status(404).send({ error: 'Failed to find product in database' });
-      return res.end();
+      console.error(err);
+      res.status(404).send({ error: `Failed to get product: ${err.message}` });
     });
 });
 
 router.post('/products', (req, res, next) => {
   // ? Validate with schema or using zod
   // ? Validate if product already exists in db
-  if (!req.body) {
-    res
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res
       .status(400)
       .send({ error: 'Failed to supply product in body of request' });
-    return res.end();
   }
   const product = req.body;
   const newProduct = new Product(product);
   newProduct
     .save()
     .then((doc) => {
-      res.status(201).send(doc);
       console.log('Product saved successfully');
-      return res.end();
+      res.status(201).send(doc);
     })
     .catch((err) => {
       console.error(err);
       res.status(500).send({ error: 'Failed to save product to database' });
-      return res.end();
     });
 });
 
 router.post('/products/:product/reviews', (req, res, next) => {
   // ? Validate if review already exists in db
-  if (!req.body) {
-    res
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res
       .status(400)
       .send({ error: 'Failed to supply review in body of request' });
-    return res.end();
   }
   const review = req.body;
   const { product } = req.params;
@@ -131,24 +128,28 @@ router.post('/products/:product/reviews', (req, res, next) => {
   Product.findById(product)
     .exec()
     .then((dbProduct) => {
+      if (!dbProduct) {
+        throw new Error('Product not found');
+      }
       dbProduct.reviews.push(review);
-      dbProduct
-        .save()
-        .then((doc) => {
-          res.status(201).send(doc);
-          console.log('Review saved successfully');
-          return res.end();
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).send({ error: 'Failed to save review to database' });
-          return res.end();
-        });
+      return dbProduct.save();
+    })
+    .then((updatedProduct) => {
+      console.log('Review saved successfully');
+
+      const newReview =
+        updatedProduct.reviews[updatedProduct.reviews.length - 1];
+      res.status(201).send(newReview);
     })
     .catch((err) => {
-      console.log(err);
-      res.status(404).send({ error: 'Failed to find product in database' });
-      return res.end();
+      console.error(err);
+      if (err.message === 'Product not found') {
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
+      }
+
+      res.status(500).send({ error: 'Failed to save review to database' });
     });
 });
 
