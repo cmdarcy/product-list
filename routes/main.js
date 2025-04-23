@@ -26,25 +26,56 @@ router.get('/generate-fake-data', (req, res, next) => {
 });
 
 router.get('/products', (req, res, next) => {
-  // ? paginate based on mongoose chain operators or promise result logic???
   const perPage = 9;
-  let { page } = req.query;
-  if (!page) {
-    page = 1;
+  let { page = 1, category, price, query } = req.query;
+
+  const dbQuery = Product.find();
+
+  if (category) {
+    dbQuery.find({ category });
   }
-  let skipNum;
-  Product.find()
-    // .skip(skipNum)
-    // .limit(perPage)
-    .exec()
-    .then((dbProducts) => {
-      const maxPage = Math.ceil(dbProducts.length / perPage);
-      if (maxPage < page) {
-        skipNum = (maxPage - 1) * perPage;
-      } else {
-        skipNum = (page - 1) * perPage;
+
+  if (price) {
+    if (price === 'highest') {
+      dbQuery.sort({ price: 'desc' });
+    } else if (price === 'lowest') {
+      dbQuery.sort({ price: 'asc' });
+    } else {
+      throw new Error('Price query must be "highest" or "lowest"');
+    }
+  }
+
+  if (query) {
+    dbQuery.find({ name: { $regex: query, $options: 'i' } });
+  }
+
+  Product.countDocuments(dbQuery.getQuery())
+    .then((totalProducts) => {
+      const maxPage = Math.ceil(totalProducts / perPage);
+      if (page > maxPage) {
+        page = maxPage;
       }
-      res.status(200).send(dbProducts.slice(skipNum, skipNum + perPage));
+      const skip = (page - 1) * perPage;
+
+      return dbQuery
+        .skip(skip)
+        .limit(perPage)
+        .exec()
+        .then((dbProducts) => {
+          res.status(200).send({
+            products: dbProducts,
+            pagination: {
+              currentPage: page,
+              totalPages: maxPage,
+              totalProducts,
+              perPage,
+            },
+          });
+        });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400).send(`Unable to get products: ${err.message}`);
     });
 });
 
