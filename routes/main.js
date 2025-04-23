@@ -152,4 +152,49 @@ router.post('/products/:product/reviews', (req, res, next) => {
     });
 });
 
+router.delete('/products/:product', (req, res, next) => {
+  const { product } = req.params;
+  Product.findByIdAndDelete(product)
+    .exec()
+    .then((dbProduct) => {
+      if (!dbProduct) {
+        throw new Error('Product not found');
+      }
+      console.log('Product deleted successfully');
+      res.status(200).send(dbProduct);
+    })
+    .catch((err) => {
+      console.error(err);
+      res
+        .status(404)
+        .send({ error: `Failed to delete product: ${err.message}` });
+    });
+});
+
+router.delete('/reviews/:review', (req, res, next) => {
+  const { review } = req.params;
+  Product.findOne({ 'reviews._id': review })
+    .exec()
+    .then((product) => {
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      product.reviews = product.reviews.filter(
+        (rev) => !rev._id.equals(review),
+      );
+      return product.save();
+    })
+    .then((updatedProduct) => {
+      console.log('Review deleted successfully');
+      res.status(200).send(updatedProduct);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(404).send({
+        error: `Failed to delete review: ${err.message}`,
+      });
+    });
+});
+
 module.exports = router;
