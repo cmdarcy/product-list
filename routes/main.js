@@ -97,11 +97,7 @@ router.get('/products/:product', (req, res, next) => {
 
 router.get('/products/:product/reviews', (req, res, next) => {
   const perPage = 4;
-  let { page } = req.query;
-  if (!page) {
-    page = 1;
-  }
-  let skipNum;
+  let { page = 1 } = req.query;
 
   const { product } = req.params;
   Product.findById(product, 'reviews')
@@ -110,13 +106,22 @@ router.get('/products/:product/reviews', (req, res, next) => {
       if (!dbProduct) {
         throw new Error('Product not found');
       }
-      const maxPage = Math.ceil(dbProduct.reviews.length / perPage);
-      if (maxPage < page) {
-        skipNum = (maxPage - 1) * perPage;
-      } else {
-        skipNum = (page - 1) * perPage;
+      const totalReviews = dbProduct.reviews.length;
+      const maxPage = Math.ceil(totalReviews / perPage);
+      if (page > maxPage) {
+        page = maxPage;
       }
-      res.status(200).send(dbProduct.reviews.slice(skipNum, skipNum + perPage));
+      const skipNum = (page - 1) * perPage;
+
+      res.status(200).send({
+        products: dbProduct.reviews.slice(skipNum, skipNum + perPage),
+        pagination: {
+          currentPage: page,
+          totalPages: maxPage,
+          totalReviews,
+          perPage,
+        },
+      });
     })
     .catch((err) => {
       console.error(err);
