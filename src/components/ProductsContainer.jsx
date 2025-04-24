@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts, selectProducts } from '../store/productsSlice';
 
 function ProductsContainer() {
-  const [products, setProducts] = useState([]);
+  const products = useSelector(selectProducts);
+  const dispatch = useDispatch();
   useEffect(() => {
-    async function fetchData() {
-      const response = await fetch('http://localhost:8000/products');
-      const data = await response.json();
-      setProducts(data.products);
-    }
-    fetchData();
-  }, []);
+    dispatch(fetchProducts());
+  }, [dispatch]);
   return (
     <div>
       <h2>ProductsContainer</h2>
