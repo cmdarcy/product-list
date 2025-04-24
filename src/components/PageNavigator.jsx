@@ -10,7 +10,8 @@ function PageNavigator() {
     (_, i) => i + 1,
   );
   const pageClickHandler = (pageNum) => {
-    dispatch(fetchProducts(pageNum));
+    // TODO fix navigation logic to include other search params
+    dispatch(fetchProducts({ pageNum }));
   };
   return (
     <div>

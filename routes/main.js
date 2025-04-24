@@ -52,7 +52,7 @@ router.get('/products', (req, res, next) => {
   Product.countDocuments(dbQuery.getQuery())
     .then((totalProducts) => {
       const maxPage = Math.ceil(totalProducts / perPage);
-      if (page > maxPage) {
+      if (page > maxPage && maxPage !== 0) {
         page = maxPage;
       }
       const skip = (page - 1) * perPage;
