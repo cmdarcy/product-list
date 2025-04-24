@@ -2,11 +2,22 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (pageNum = 1) => {
+  async ({ searchProduct, searchCategory, sortPrice, pageNum = 1 }) => {
+    console.log(searchProduct, searchCategory, sortPrice);
+    const baseURL = 'http://localhost:8000/products';
+    let fetchURL = `${baseURL}?page=${pageNum}`;
+    if (searchProduct) {
+      fetchURL += `&query=${searchProduct}`;
+    }
+    if (searchCategory) {
+      fetchURL += `&category=${searchCategory}`;
+    }
+    if (sortPrice) {
+      fetchURL += `&price=${sortPrice}`;
+    }
+    console.log(fetchURL);
     try {
-      const response = await fetch(
-        `http://localhost:8000/products?page=${pageNum}`,
-      );
+      const response = await fetch(fetchURL);
       if (!response.ok) {
         throw new Error(`Invalid request: ${response.status}`);
       }

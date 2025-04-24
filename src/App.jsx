@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import PageNavigator from './components/PageNavigator';
 import ProductsContainer from './components/ProductsContainer';
 import { fetchProducts } from './store/productsSlice';
+import SearchForm from './components/SearchForm';
 
 function App() {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ function App() {
   return (
     <>
       <h1>React Frontend for Products API</h1>
+      <SearchForm />
       <ProductsContainer />
       <PageNavigator />
     </>
