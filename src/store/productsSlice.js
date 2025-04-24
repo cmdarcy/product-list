@@ -2,9 +2,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async () => {
+  async (pageNum = 1) => {
     try {
-      const response = await fetch('http://localhost:8000/products');
+      const response = await fetch(
+        `http://localhost:8000/products?page=${pageNum}`,
+      );
       if (!response.ok) {
         throw new Error(`Invalid request: ${response.status}`);
       }

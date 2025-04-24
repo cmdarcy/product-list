@@ -4,10 +4,10 @@ import { fetchProducts, selectProducts } from '../store/productsSlice';
 
 function ProductsContainer() {
   const products = useSelector(selectProducts);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(fetchProducts());
+  // }, [dispatch]);
   return (
     <div>
       <h2>ProductsContainer</h2>
