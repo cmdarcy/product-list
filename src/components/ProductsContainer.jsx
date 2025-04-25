@@ -1,18 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectProducts } from '../store/productsSlice';
+import ProductCard from './ProductCard';
 
 function ProductsContainer() {
   const products = useSelector(selectProducts);
   return (
     <div>
       <h2>ProductsContainer</h2>
-      {
-        // TODO add logic to display message if no products found
-      }
-      {products.map((p) => (
-        <h3>{p.name}</h3>
-      ))}
+      {products.length === 0 ? (
+        <h2> No products found. Try another search!</h2>
+      ) : (
+        products.map((product) => <ProductCard product={product} />)
+      )}
     </div>
   );
 }
