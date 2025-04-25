@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 function ProductCard({ product }) {
   return (
     <div>
-      <h3>Product Card</h3>
       <div>
         <p>Category: {product.category}</p>
         <p>{product.price}</p>
