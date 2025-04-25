@@ -8,7 +8,7 @@ import SearchForm from './components/SearchForm';
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchProducts({}));
   }, [dispatch]);
   return (
     <>
