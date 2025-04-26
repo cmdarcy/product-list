@@ -1,6 +1,8 @@
-const router = require('express').Router();
-const faker = require('faker');
-const Product = require('../models/product');
+import { Router } from 'express';
+import faker from 'faker';
+import Product from '../models/product.js';
+
+const router = Router();
 
 router.get('/generate-fake-data', (req, res, next) => {
   for (let i = 0; i < 90; i += 1) {
@@ -234,4 +236,4 @@ router.delete('/reviews/:review', (req, res, next) => {
     });
 });
 
-module.exports = router;
+export default router;

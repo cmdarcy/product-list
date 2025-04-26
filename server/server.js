@@ -1,7 +1,7 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const mainRoutes = require('./routes/main');
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import router from './routes/main.js';
 
 mongoose.connect('mongodb://localhost/products', {
   useNewUrlParser: true,
@@ -27,7 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(mainRoutes);
+app.use(router);
 
 app.listen(8000, () => {
   console.log(`Node.js listening on port ${8000}`);
