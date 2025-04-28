@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchProducts } from '../store/productsSlice';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 function SearchForm() {
   const [searchProduct, setSearchProduct] = useState('');
@@ -21,54 +32,67 @@ function SearchForm() {
   };
   return (
     <form onSubmit={handleFormSubmit}>
-      <label htmlFor="searchProduct">Product Search</label>
-      <input
+      <Input
         onChange={(e) => setSearchProduct(e.target.value)}
         type="text"
         name="searchProduct"
         id="searchProduct"
         value={searchProduct}
+        placeholder="Search for Product"
       />
 
-      <select
-        onChange={(e) => setSearchCategory(e.target.value)}
+      <Select
+        onValueChange={(val) => setSearchCategory(val)}
         name="searchCategory"
         id="searchCategory"
         value={searchCategory}
       >
-        <option value="">Sort by Category</option>
-        <option value="Automotive">Automotive</option>
-        <option value="Tools">Tools</option>
-        <option value="Clothing">Clothing</option>
-        <option value="Outdoors">Outdoors</option>
-        <option value="Garden">Garden</option>
-        <option value="Shoes">Shoes</option>
-        <option value="Industrial">Industrial</option>
-        <option value="Health">Health</option>
-        <option value="Music">Music</option>
-        <option value="Books">Books</option>
-        <option value="Movies">Movies</option>
-        <option value="Jewelery">Jewelery</option>
-        <option value="Computers">Computers</option>
-        <option value="Baby">Baby</option>
-        <option value="Toys">Toys</option>
-        <option value="Kids">Kids</option>
-        <option value="Home">Home</option>
-      </select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select a Category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Category</SelectLabel>
+            <SelectItem value="Automotive">Automotive</SelectItem>
+            <SelectItem value="Tools">Tools</SelectItem>
+            <SelectItem value="Clothing">Clothing</SelectItem>
+            <SelectItem value="Outdoors">Outdoors</SelectItem>
+            <SelectItem value="Garden">Garden</SelectItem>
+            <SelectItem value="Shoes">Shoes</SelectItem>
+            <SelectItem value="Industrial">Industrial</SelectItem>
+            <SelectItem value="Health">Health</SelectItem>
+            <SelectItem value="Music">Music</SelectItem>
+            <SelectItem value="Books">Books</SelectItem>
+            <SelectItem value="Movies">Movies</SelectItem>
+            <SelectItem value="Jewelery">Jewelery</SelectItem>
+            <SelectItem value="Computers">Computers</SelectItem>
+            <SelectItem value="Baby">Baby</SelectItem>
+            <SelectItem value="Toys">Toys</SelectItem>
+            <SelectItem value="Kids">Kids</SelectItem>
+            <SelectItem value="Home">Home</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
-      <select
-        onChange={(e) => setSortPrice(e.target.value)}
+      <Select
+        onValueChange={(val) => setSortPrice(val)}
         name="sortPrice"
         id="sortPrice"
         value={sortPrice}
       >
-        <option value="">Sort by Price</option>
-        <option value="highest">Highest</option>
-        <option value="lowest">Lowest</option>
-      </select>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Sort by Price" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Price Sort</SelectLabel>
+            <SelectItem value="highest">Highest</SelectItem>
+            <SelectItem value="lowest">Lowest</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
-      <button type="submit">Search</button>
-      <Button type='submit'>Search</Button>
+      <Button type="submit">Search</Button>
     </form>
   );
 }
