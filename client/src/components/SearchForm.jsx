@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchProducts } from '../store/productsSlice';
+import { Button } from './ui/button';
 
 function SearchForm() {
   const [searchProduct, setSearchProduct] = useState('');
@@ -67,6 +68,7 @@ function SearchForm() {
       </select>
 
       <button type="submit">Search</button>
+      <Button type='submit'>Search</Button>
     </form>
   );
 }
