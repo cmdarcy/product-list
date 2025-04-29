@@ -10,7 +10,9 @@ function ProductsContainer() {
       {products.length === 0 ? (
         <h2> No products found. Try another search!</h2>
       ) : (
-        products.map((product) => <ProductCard product={product} />)
+        products.map((product) => (
+          <ProductCard product={product} key={product._id} />
+        ))
       )}
     </div>
   );

@@ -5,7 +5,7 @@ import { Card, CardContent, CardTitle } from './ui/card';
 function ProductCard({ product }) {
   return (
     <Card>
-      <div className="flex justify-between">
+      <div className="flex justify-between px-1.5">
         <p>
           Category: <strong>{product.category}</strong>
         </p>

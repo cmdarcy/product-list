@@ -11,12 +11,11 @@ function App() {
     dispatch(fetchProducts({}));
   }, [dispatch]);
   return (
-    <>
-      <h1>React Frontend for Products API</h1>
+    <div className="grid place-content-center m-3 gap-2">
       <SearchForm />
       <ProductsContainer />
       <PageNavigator />
-    </>
+    </div>
   );
 }
 

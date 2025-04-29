@@ -30,7 +30,7 @@ function SearchForm() {
     );
   };
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form onSubmit={handleFormSubmit} className="flex justify-around gap-3.5">
       <Input
         onChange={(e) => setSearchProduct(e.target.value)}
         type="text"
