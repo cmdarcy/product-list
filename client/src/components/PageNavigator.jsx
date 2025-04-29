@@ -1,6 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts, selectPagination } from '../store/productsSlice';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from './ui/pagination';
 
 function PageNavigator() {
   const dispatch = useDispatch();
@@ -15,18 +21,21 @@ function PageNavigator() {
   };
   return (
     <div>
-      <h2>PageNavigator</h2>
-      <ul>
-        {pageButtons.map((pageNumber, i) => (
-          <button
-            type="button"
-            key={i}
-            onClick={() => pageClickHandler(pageNumber)}
-          >
-            Page {pageNumber}
-          </button>
-        ))}
-      </ul>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            {pageButtons.map((pageNumber, i) => (
+              <PaginationLink
+                key={i}
+                onClick={() => pageClickHandler(pageNumber)}
+                href="#"
+              >
+                {pageNumber}
+              </PaginationLink>
+            ))}
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }
