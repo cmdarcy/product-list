@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { fetchProducts } from '../store/productsSlice';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Label } from './ui/label';
 import {
   Select,
   SelectContent,

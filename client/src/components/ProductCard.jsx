@@ -1,16 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Card, CardContent, CardTitle } from './ui/card';
 
 function ProductCard({ product }) {
   return (
-    <div>
-      <div>
-        <p>Category: {product.category}</p>
-        <p>{product.price}</p>
+    <Card>
+      <div className="flex justify-between">
+        <p>
+          Category: <strong>{product.category}</strong>
+        </p>
+        <p className="text-xl font-bold">${product.price}</p>
       </div>
-      <img src={product.image} alt="product" />
-      <h4>{product.name}</h4>
-    </div>
+      <CardContent>
+        <img src={product.image} alt="product" />
+        <CardTitle className="text-3xl font-extrabold">
+          {product.name}
+        </CardTitle>
+      </CardContent>
+    </Card>
   );
 }
 

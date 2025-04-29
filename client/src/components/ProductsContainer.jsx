@@ -6,8 +6,7 @@ import ProductCard from './ProductCard';
 function ProductsContainer() {
   const products = useSelector(selectProducts);
   return (
-    <div>
-      <h2>ProductsContainer</h2>
+    <div className="grid grid-cols-3 gap-3">
       {products.length === 0 ? (
         <h2> No products found. Try another search!</h2>
       ) : (
