@@ -1,6 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, selectPagination } from '../store/productsSlice';
+import {
+  fetchProducts,
+  selectSearchParams,
+  selectPagination,
+} from '../store/productsSlice';
 import {
   Pagination,
   PaginationContent,
@@ -10,14 +14,14 @@ import {
 
 function PageNavigator() {
   const dispatch = useDispatch();
+  const searchParams = useSelector(selectSearchParams);
   const pagination = useSelector(selectPagination);
   const pageButtons = Array.from(
     { length: pagination.totalPages },
     (_, i) => i + 1,
   );
   const pageClickHandler = (pageNum) => {
-    // TODO fix navigation logic to include other search params
-    dispatch(fetchProducts({ pageNum }));
+    dispatch(fetchProducts({ ...searchParams, pageNum }));
   };
   return (
     <div>

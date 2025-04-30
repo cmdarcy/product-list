@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { fetchProducts } from '../store/productsSlice';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchProducts,
+  selectSearchParams,
+  setSearchParams,
+} from '../store/productsSlice';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -14,17 +18,14 @@ import {
 } from './ui/select';
 
 function SearchForm() {
-  const [searchProduct, setSearchProduct] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
-  const [sortPrice, setSortPrice] = useState('');
   const dispatch = useDispatch();
+  const searchParams = useSelector(selectSearchParams);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     dispatch(
       fetchProducts({
-        searchProduct,
-        searchCategory,
-        sortPrice,
+        ...searchParams,
         pageNum: 1,
       }),
     );
@@ -32,19 +33,22 @@ function SearchForm() {
   return (
     <form onSubmit={handleFormSubmit} className="flex justify-around gap-3.5">
       <Input
-        onChange={(e) => setSearchProduct(e.target.value)}
-        type="text"
+        onChange={(e) =>
+          dispatch(setSearchParams({ searchProduct: e.target.value }))
+        }
         name="searchProduct"
         id="searchProduct"
-        value={searchProduct}
+        value={searchParams.searchProduct}
         placeholder="Search for Product"
       />
 
       <Select
-        onValueChange={(val) => setSearchCategory(val)}
+        onValueChange={(val) =>
+          dispatch(setSearchParams({ searchCategory: val }))
+        }
         name="searchCategory"
         id="searchCategory"
-        value={searchCategory}
+        value={searchParams.searchCategory}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select a Category" />
@@ -74,10 +78,10 @@ function SearchForm() {
       </Select>
 
       <Select
-        onValueChange={(val) => setSortPrice(val)}
+        onValueChange={(val) => dispatch(setSearchParams({ sortPrice: val }))}
         name="sortPrice"
         id="sortPrice"
-        value={sortPrice}
+        value={searchParams.sortPrice}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Sort by Price" />

@@ -3,7 +3,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async ({ searchProduct, searchCategory, sortPrice, pageNum = 1 }) => {
-    console.log(searchProduct, searchCategory, sortPrice);
     const baseURL = 'http://localhost:8000/products';
     let fetchURL = `${baseURL}?page=${pageNum}`;
     if (searchProduct) {
@@ -15,7 +14,6 @@ export const fetchProducts = createAsyncThunk(
     if (sortPrice) {
       fetchURL += `&price=${sortPrice}`;
     }
-    console.log(fetchURL);
     try {
       const response = await fetch(fetchURL);
       if (!response.ok) {
@@ -37,13 +35,22 @@ const initialState = {
     totalProducts: null,
     perPage: null,
   },
+  searchParams: {
+    searchProduct: '',
+    searchCategory: '',
+    sortPrice: '',
+  },
   status: 'idle',
   error: null,
 };
 const productsSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    setSearchParams: (state, action) => {
+      state.searchParams = { ...state.searchParams, ...action.payload };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchProducts.pending, (state) => {
       state.status = 'loading';
@@ -62,5 +69,8 @@ const productsSlice = createSlice({
 
 export const selectProducts = (state) => state.products;
 export const selectPagination = (state) => state.pagination;
+export const selectSearchParams = (state) => state.searchParams;
+
+export const { setSearchParams } = productsSlice.actions;
 
 export default productsSlice.reducer;
