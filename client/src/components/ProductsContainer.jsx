@@ -6,9 +6,14 @@ import ProductCard from './ProductCard';
 function ProductsContainer() {
   const products = useSelector(selectProducts);
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {products.length === 0 ? (
-        <h2> No products found. Try another search!</h2>
+        <div className="col-span-full text-center py-8">
+          <h2 className="text-xl font-semibold">
+            No products found. Try another search!
+          </h2>
+          <p className="text-gray-600">Try another search</p>
+        </div>
       ) : (
         products.map((product) => (
           <ProductCard product={product} key={product._id} />
