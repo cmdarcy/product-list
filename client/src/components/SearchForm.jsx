@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchProducts,
+  selectCategories,
   selectSearchParams,
   setSearchParams,
 } from '../store/productsSlice';
@@ -20,6 +21,7 @@ import {
 function SearchForm() {
   const dispatch = useDispatch();
   const searchParams = useSelector(selectSearchParams);
+  const categories = useSelector(selectCategories);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -50,36 +52,28 @@ function SearchForm() {
 
       <div className="w-full sm:w-auto">
         <Select
-          onValueChange={(val) =>
-            dispatch(setSearchParams({ searchCategory: val }))
-          }
+          onValueChange={(val) => {
+            const searchCategory = val === 'default' ? '' : val;
+            dispatch(setSearchParams({ searchCategory }));
+          }}
           name="searchCategory"
           id="searchCategory"
           value={searchParams.searchCategory}
         >
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer">
             <SelectValue placeholder="Select a Category" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Category</SelectLabel>
-              <SelectItem value="Automotive">Automotive</SelectItem>
-              <SelectItem value="Tools">Tools</SelectItem>
-              <SelectItem value="Clothing">Clothing</SelectItem>
-              <SelectItem value="Outdoors">Outdoors</SelectItem>
-              <SelectItem value="Garden">Garden</SelectItem>
-              <SelectItem value="Shoes">Shoes</SelectItem>
-              <SelectItem value="Industrial">Industrial</SelectItem>
-              <SelectItem value="Health">Health</SelectItem>
-              <SelectItem value="Music">Music</SelectItem>
-              <SelectItem value="Books">Books</SelectItem>
-              <SelectItem value="Movies">Movies</SelectItem>
-              <SelectItem value="Jewelery">Jewelery</SelectItem>
-              <SelectItem value="Computers">Computers</SelectItem>
-              <SelectItem value="Baby">Baby</SelectItem>
-              <SelectItem value="Toys">Toys</SelectItem>
-              <SelectItem value="Kids">Kids</SelectItem>
-              <SelectItem value="Home">Home</SelectItem>
+              <SelectItem className="text-gray-400" value="default">
+                Default
+              </SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -87,17 +81,23 @@ function SearchForm() {
 
       <div className="w-full sm:w-auto">
         <Select
-          onValueChange={(val) => dispatch(setSearchParams({ sortPrice: val }))}
+          onValueChange={(val) => {
+            const sortPrice = val === 'default' ? '' : val;
+            dispatch(setSearchParams({ sortPrice }));
+          }}
           name="sortPrice"
           id="sortPrice"
           value={searchParams.sortPrice}
         >
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer">
             <SelectValue placeholder="Sort by Price" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Price Sort</SelectLabel>
+              <SelectItem className="text-gray-400" value="default">
+                Default
+              </SelectItem>
               <SelectItem value="highest">Highest</SelectItem>
               <SelectItem value="lowest">Lowest</SelectItem>
             </SelectGroup>
@@ -105,7 +105,9 @@ function SearchForm() {
         </Select>
       </div>
 
-      <Button type="submit">Search</Button>
+      <Button className="hover:cursor-pointer" type="submit">
+        Search
+      </Button>
     </form>
   );
 }

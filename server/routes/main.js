@@ -59,21 +59,24 @@ router.get('/products', (req, res, next) => {
       }
       const skip = (page - 1) * perPage;
 
-      return dbQuery
-        .skip(skip)
-        .limit(perPage)
-        .exec()
-        .then((dbProducts) => {
-          res.status(200).send({
-            products: dbProducts,
-            pagination: {
-              currentPage: page,
-              totalPages: maxPage,
-              totalProducts,
-              perPage,
-            },
-          });
-        });
+      return Product.distinct('category').then((categories) =>
+        dbQuery
+          .skip(skip)
+          .limit(perPage)
+          .exec()
+          .then((dbProducts) => {
+            res.status(200).send({
+              products: dbProducts,
+              pagination: {
+                currentPage: page,
+                totalPages: maxPage,
+                totalProducts,
+                perPage,
+              },
+              categories,
+            });
+          }),
+      );
     })
     .catch((err) => {
       console.error(err);

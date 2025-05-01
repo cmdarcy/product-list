@@ -29,6 +29,7 @@ export const fetchProducts = createAsyncThunk(
 
 const initialState = {
   products: [],
+  categories: [],
   pagination: {
     currentPage: null,
     totalPages: null,
@@ -59,6 +60,7 @@ const productsSlice = createSlice({
       state.status = 'succeeded';
       state.products = action.payload.products;
       state.pagination = action.payload.pagination;
+      state.categories = action.payload.categories;
     });
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.status = 'failed';
@@ -70,6 +72,7 @@ const productsSlice = createSlice({
 export const selectProducts = (state) => state.products;
 export const selectPagination = (state) => state.pagination;
 export const selectSearchParams = (state) => state.searchParams;
+export const selectCategories = (state) => state.categories;
 
 export const { setSearchParams } = productsSlice.actions;
 
