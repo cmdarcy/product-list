@@ -16,6 +16,7 @@ function PageNavigator() {
   const dispatch = useDispatch();
   const searchParams = useSelector(selectSearchParams);
   const pagination = useSelector(selectPagination);
+  const { currentPage } = pagination;
   const pageButtons = Array.from(
     { length: pagination.totalPages },
     (_, i) => i + 1,
@@ -30,9 +31,10 @@ function PageNavigator() {
           <PaginationItem>
             {pageButtons.map((pageNumber, i) => (
               <PaginationLink
+                className="hover:cursor-pointer"
+                isActive={parseInt(currentPage) === pageNumber}
                 key={i}
                 onClick={() => pageClickHandler(pageNumber)}
-                href="#"
               >
                 {pageNumber}
               </PaginationLink>
