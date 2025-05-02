@@ -46,7 +46,7 @@ function SearchForm() {
           id="searchProduct"
           value={searchParams.searchProduct}
           placeholder="Search for Product"
-          className="w-full"
+          className="w-full text-slate-200"
         />
       </div>
 
@@ -60,7 +60,7 @@ function SearchForm() {
           id="searchCategory"
           value={searchParams.searchCategory}
         >
-          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer">
+          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer text-slate-200">
             <SelectValue placeholder="Select a Category" />
           </SelectTrigger>
           <SelectContent>
@@ -89,7 +89,7 @@ function SearchForm() {
           id="sortPrice"
           value={searchParams.sortPrice}
         >
-          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer">
+          <SelectTrigger className="w-full sm:w-[180px] hover:cursor-pointer text-slate-200">
             <SelectValue placeholder="Sort by Price" />
           </SelectTrigger>
           <SelectContent>

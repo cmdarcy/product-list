@@ -27,7 +27,7 @@ function PageNavigator() {
   return (
     <div>
       <Pagination>
-        <PaginationContent>
+        <PaginationContent className="bg-gradient-to-r from-slate-200 to-slate-500 p-3 rounded-md">
           <PaginationItem>
             {pageButtons.map((pageNumber, i) => (
               <PaginationLink

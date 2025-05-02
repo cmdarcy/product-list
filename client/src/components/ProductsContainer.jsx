@@ -9,10 +9,10 @@ function ProductsContainer() {
     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {products.length === 0 ? (
         <div className="col-span-full text-center py-8">
-          <h2 className="text-xl font-semibold">
+          <h2 className="text-xl font-semibold text-slate-100">
             No products found. Try another search!
           </h2>
-          <p className="text-gray-600">Try another search</p>
+          <p className="text-slate-300">Try another search</p>
         </div>
       ) : (
         products.map((product) => (

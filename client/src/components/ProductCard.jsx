@@ -6,7 +6,7 @@ const DEFAULTIMAGE = '/default-image-1.jpg';
 
 function ProductCard({ product }) {
   return (
-    <Card>
+    <Card className="bg-gradient-to-t from-slate-400 to-slate-200">
       <div className="flex justify-between px-1.5">
         <p>
           Category: <strong>{product.category}</strong>
