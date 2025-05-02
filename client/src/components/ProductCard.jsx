@@ -16,12 +16,8 @@ function ProductCard({ product }) {
       <CardContent>
         <div className="relative aspect-square w-full">
           <img
-            src={product.image}
+            src={DEFAULTIMAGE}
             alt={product.name}
-            onError={(e) => {
-              e.currentTarget.src = DEFAULTIMAGE;
-              e.currentTarget.onerror = null;
-            }}
             loading="lazy"
             className="w-full h-full object-cover"
           />
