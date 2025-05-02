@@ -12,7 +12,6 @@ function ProductsContainer() {
           <h2 className="text-xl font-semibold text-slate-100">
             No products found. Try another search!
           </h2>
-          <p className="text-slate-300">Try another search</p>
         </div>
       ) : (
         products.map((product) => (
