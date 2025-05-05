@@ -22,11 +22,11 @@ const reviewSchema = z.object({
 });
 
 const productSchema = z.object({
-  name: z.string().min(3).required(),
-  category: z.string().min(3).required(),
-  price: z.number().int().positive().required(),
-  image: z.string().url().required(),
-  reviews: z.array(reviewSchema).required(),
+  name: z.string().min(3),
+  category: z.string().min(3),
+  price: z.number().int().positive(),
+  image: z.string().url(),
+  reviews: z.array(reviewSchema).optional(),
 });
 
 export { reviewSchema, productSchema };
