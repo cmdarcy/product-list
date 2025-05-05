@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { z } from 'zod';
 
 const { Schema } = mongoose;
 
@@ -14,6 +15,21 @@ const ProductSchema = new Schema({
   image: { type: String, required: true },
   reviews: [ReviewSchema],
 });
+
+const reviewSchema = z.object({
+  userName: z.string().min(5),
+  text: z.string().min(5),
+});
+
+const productSchema = z.object({
+  name: z.string().min(3).required(),
+  category: z.string().min(3).required(),
+  price: z.number().int().positive().required(),
+  image: z.string().url().required(),
+  reviews: z.array(reviewSchema).required(),
+});
+
+export { reviewSchema, productSchema };
 
 const Product = mongoose.model('Product', ProductSchema);
 export default Product;

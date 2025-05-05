@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import faker from 'faker';
-import Product from '../models/product.js';
+import Product, { reviewSchema, productSchema } from '../models/product.js';
 
 const router = Router();
 
@@ -43,7 +43,9 @@ router.get('/products', (req, res, next) => {
     } else if (price === 'lowest') {
       dbQuery.sort({ price: 'asc' });
     } else {
-      throw new Error('Price query must be "highest" or "lowest"');
+      return res
+        .status(400)
+        .send({ error: 'Price query must be "highest" or "lowest"' });
     }
   }
 
@@ -80,7 +82,7 @@ router.get('/products', (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(400).send(`Unable to get products: ${err.message}`);
+      res.status(400).send({ error: `Unable to get products: ${err.message}` });
     });
 });
 
@@ -90,13 +92,15 @@ router.get('/products/:product', (req, res, next) => {
     .exec()
     .then((dbProduct) => {
       if (!dbProduct) {
-        throw new Error('Product not found');
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
       }
       res.status(200).send(dbProduct);
     })
     .catch((err) => {
       console.error(err);
-      res.status(404).send({ error: `Failed to get product: ${err.message}` });
+      res.status(500).send({ error: `Failed to get product: ${err.message}` });
     });
 });
 
@@ -109,17 +113,19 @@ router.get('/products/:product/reviews', (req, res, next) => {
     .exec()
     .then((dbProduct) => {
       if (!dbProduct) {
-        throw new Error('Product not found');
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
       }
       const totalReviews = dbProduct.reviews.length;
       const maxPage = Math.ceil(totalReviews / perPage);
-      if (page > maxPage) {
+      if (page > maxPage && maxPage !== 0) {
         page = maxPage;
       }
       const skipNum = (page - 1) * perPage;
 
       res.status(200).send({
-        products: dbProduct.reviews.slice(skipNum, skipNum + perPage),
+        reviews: dbProduct.reviews.slice(skipNum, skipNum + perPage),
         pagination: {
           currentPage: page,
           totalPages: maxPage,
@@ -130,39 +136,46 @@ router.get('/products/:product/reviews', (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(404).send({ error: `Failed to get product: ${err.message}` });
+      res.status(500).send({ error: `Failed to get product: ${err.message}` });
     });
 });
 
 router.post('/products', (req, res, next) => {
-  // ? Validate with schema or using zod
-  // ? Validate if product already exists in db
-  if (!req.body || Object.keys(req.body).length === 0) {
-    return res
-      .status(400)
-      .send({ error: 'Failed to supply product in body of request' });
+  const result = productSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).send({ error: 'Invalid product data' });
   }
+
   const product = req.body;
-  const newProduct = new Product(product);
-  newProduct
-    .save()
-    .then((doc) => {
-      console.log('Product saved successfully');
-      res.status(201).send(doc);
+
+  Product.findOne({ name: product.name })
+    .exec()
+    .then((existingProduct) => {
+      if (existingProduct) {
+        return res.status(409).send({ error: 'Product name already exists' });
+      }
+
+      const newProduct = new Product(product);
+
+      return newProduct.save().then((doc) => {
+        console.log('Product saved successfully');
+        res.status(201).send(doc);
+      });
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send({ error: 'Failed to save product to database' });
+      res.status(500).send({ error: `Failed to save product: ${err.message}` });
     });
 });
 
 router.post('/products/:product/reviews', (req, res, next) => {
-  // ? Validate if review already exists in db
-  if (!req.body || Object.keys(req.body).length === 0) {
-    return res
-      .status(400)
-      .send({ error: 'Failed to supply review in body of request' });
+  const result = reviewSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).send({ error: 'Invalid review data' });
   }
+
   const review = req.body;
   const { product } = req.params;
 
@@ -170,7 +183,16 @@ router.post('/products/:product/reviews', (req, res, next) => {
     .exec()
     .then((dbProduct) => {
       if (!dbProduct) {
-        throw new Error('Product not found');
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
+      }
+      if (
+        dbProduct.reviews.some(
+          (rev) => rev.userName === review.userName && rev.text === review.text,
+        )
+      ) {
+        return res.status(409).send({ error: 'Review already exists' });
       }
       dbProduct.reviews.push(review);
       return dbProduct.save();
@@ -184,13 +206,7 @@ router.post('/products/:product/reviews', (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-      if (err.message === 'Product not found') {
-        return res
-          .status(404)
-          .send({ error: 'Failed to find product in database' });
-      }
-
-      res.status(500).send({ error: 'Failed to save review to database' });
+      res.status(500).send({ error: `Failed to add review: ${err.message}` });
     });
 });
 
@@ -200,7 +216,9 @@ router.delete('/products/:product', (req, res, next) => {
     .exec()
     .then((dbProduct) => {
       if (!dbProduct) {
-        throw new Error('Product not found');
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
       }
       console.log('Product deleted successfully');
       res.status(200).send(dbProduct);
@@ -208,7 +226,7 @@ router.delete('/products/:product', (req, res, next) => {
     .catch((err) => {
       console.error(err);
       res
-        .status(404)
+        .status(500)
         .send({ error: `Failed to delete product: ${err.message}` });
     });
 });
@@ -219,7 +237,9 @@ router.delete('/reviews/:review', (req, res, next) => {
     .exec()
     .then((product) => {
       if (!product) {
-        throw new Error('Product not found');
+        return res
+          .status(404)
+          .send({ error: 'Failed to find product in database' });
       }
 
       product.reviews = product.reviews.filter(
@@ -233,7 +253,7 @@ router.delete('/reviews/:review', (req, res, next) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(404).send({
+      res.status(500).send({
         error: `Failed to delete review: ${err.message}`,
       });
     });
